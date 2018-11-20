@@ -7,30 +7,37 @@
     android:background="#f3f3f3"
     android:orientation="vertical">
 
-    <LinearLayout
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/chat_input"
         android:layout_below="@+id/title_container">
 
-        <cn.jiguang.imui.messages.MessageList
-            android:id="@+id/msg_list"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:avatarHeight="50dp"
-            app:avatarWidth="50dp"
-            app:bubbleMaxWidth="0.70"
-            app:dateTextSize="14sp"
-            app:receiveBubblePaddingLeft="20dp"
-            app:receiveBubblePaddingRight="10dp"
-            app:receiveTextColor="#ffffff"
-            app:receiveTextSize="18sp"
-            app:sendBubblePaddingLeft="10dp"
-            app:sendBubblePaddingRight="20dp"
-            app:sendTextColor="#7587A8"
-            app:sendTextSize="18sp" />
+            android:layout_height="match_parent">
 
-    </LinearLayout>
+            <cn.jiguang.imui.messages.MessageList
+                android:id="@+id/msg_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:avatarHeight="50dp"
+                app:avatarWidth="50dp"
+                app:bubbleMaxWidth="0.70"
+                app:dateTextSize="14sp"
+                app:receiveBubblePaddingLeft="20dp"
+                app:receiveBubblePaddingRight="10dp"
+                app:receiveTextColor="#ffffff"
+                app:receiveTextSize="18sp"
+                app:sendBubblePaddingLeft="10dp"
+                app:sendBubblePaddingRight="20dp"
+                app:sendTextColor="#7587A8"
+                app:sendTextSize="18sp" />
+
+        </LinearLayout>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
 
     <cn.jiguang.imui.chatinput.ChatInputView

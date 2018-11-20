@@ -34,6 +34,9 @@ import com.gao_jmessage.models.DefaultUser;
 import com.gao_jmessage.models.MyMessage;
 import com.gao_jmessage.views.ChatView;
 import com.gao_jmessage.views.GrayTransformation;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -78,6 +81,9 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
     private Sensor mSensor;
     private PowerManager mPowerManager;
     private PowerManager.WakeLock mWakeLock;
+
+    private SmartRefreshLayout smartRefreshLayout;
+
     /**
      * Store all image messages' path, pass it to {@link BrowserImageActivity},
      * so that click image message can browser all images.
@@ -93,6 +99,7 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
         mWindow = getWindow();
         registerProximitySensorListener();
         mChatView = (ChatView) findViewById(R.id.chat_view);
+        smartRefreshLayout = findViewById(R.id.refreshLayout);
         mChatView.initModule();
         mData = getMessages();
         initMsgAdapter();
@@ -100,6 +107,7 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_HEADSET_PLUG);
         registerReceiver(mReceiver, intentFilter);
+
 
         mChatView.setOnTouchListener(this);
         mChatView.setMenuClickListener(new OnMenuClickListener() {
@@ -452,66 +460,6 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
                 // You can use other image load libraries.
                 Picasso.with(getApplicationContext()).load(string).transform(new GrayTransformation(MAX_WIDTH,MIN_WIDTH,MAX_HEIGHT,MIN_HEIGHT,imageView)).into(imageView);
 
-
-                /*Glide.with(getApplicationContext())
-                        .asBitmap()
-                        .load(string)
-                        .apply(new RequestOptions().fitCenter().placeholder(R.drawable.aurora_picture_not_found))
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                int imageWidth = resource.getWidth();
-                                int imageHeight = resource.getHeight();
-                                Log.d(TAG, "Image width " + imageWidth + " height: " + imageHeight);
-
-                                // 裁剪 bitmap
-                                float width, height;
-                                if (imageWidth > imageHeight) {
-                                    if (imageWidth > MAX_WIDTH) {
-                                        float temp = MAX_WIDTH / imageWidth * imageHeight;
-                                        height = temp > MIN_HEIGHT ? temp : MIN_HEIGHT;
-                                        width = MAX_WIDTH;
-                                    } else if (imageWidth < MIN_WIDTH) {
-                                        float temp = MIN_WIDTH / imageWidth * imageHeight;
-                                        height = temp < MAX_HEIGHT ? temp : MAX_HEIGHT;
-                                        width = MIN_WIDTH;
-                                    } else {
-                                        float ratio = imageWidth / imageHeight;
-                                        if (ratio > 3) {
-                                            ratio = 3;
-                                        }
-                                        height = imageHeight * ratio;
-                                        width = imageWidth;
-                                    }
-                                } else {
-                                    if (imageHeight > MAX_HEIGHT) {
-                                        float temp = MAX_HEIGHT / imageHeight * imageWidth;
-                                        width = temp > MIN_WIDTH ? temp : MIN_WIDTH;
-                                        height = MAX_HEIGHT;
-                                    } else if (imageHeight < MIN_HEIGHT) {
-                                        float temp = MIN_HEIGHT / imageHeight * imageWidth;
-                                        width = temp < MAX_WIDTH ? temp : MAX_WIDTH;
-                                        height = MIN_HEIGHT;
-                                    } else {
-                                        float ratio = imageHeight / imageWidth;
-                                        if (ratio > 3) {
-                                            ratio = 3;
-                                        }
-                                        width = imageWidth * ratio;
-                                        height = imageHeight;
-                                    }
-                                }
-                                ViewGroup.LayoutParams params = imageView.getLayoutParams();
-                                params.width = (int) width;
-                                params.height = (int) height;
-                                imageView.setLayoutParams(params);
-                                Matrix matrix = new Matrix();
-                                float scaleWidth = width / imageWidth;
-                                float scaleHeight = height / imageHeight;
-                                matrix.postScale(scaleWidth, scaleHeight);
-                                imageView.setImageBitmap(Bitmap.createBitmap(resource, 0, 0, imageWidth, imageHeight, matrix, true));
-                            }
-                        });*/
             }
 
             /**
@@ -524,14 +472,6 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
                 long interval = 5000 * 1000;
                 Picasso.with(getApplicationContext()).load(uri).resize(400,200)
                         .centerCrop().into(imageCover);
-
-
-          /*      Glide.with(MessageListActivity.this)
-                        .asBitmap()
-                        .load(uri)
-                        // Resize image view by change override size.
-                        .apply(new RequestOptions().frame(interval).override(200, 400))
-                        .into(imageCover);*/
             }
         };
 
@@ -621,23 +561,25 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
         receiveVideo.setUserInfo(new DefaultUser("0", "Deadpool", "R.drawable.deadpool"));
         mAdapter.addToStart(receiveVideo, true);
         mAdapter.addToEndChronologically(mData);
-       /* PullToRefreshLayout layout = mChatView.getPtrLayout();
-        layout.setPtrHandler(new PtrHandler() {
-            @Override
-            public void onRefreshBegin(PullToRefreshLayout layout) {
-                Log.i("MessageListActivity", "Loading next page");
-                loadNextPage();
-            }
-        });
-        // Deprecated, should use onRefreshBegin to load next page
+
+
         mAdapter.setOnLoadMoreListener(new MsgListAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore(int page, int totalCount) {
-//                Log.i("MessageListActivity", "Loading next page");
-//                loadNextPage();
+                smartRefreshLayout.autoRefresh();
+                loadNextPage();
+                if (totalCount < mData.size()) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            smartRefreshLayout.finishRefresh();
+                            mAdapter.addToEnd(mData);
+                        }
+                    }, 1000);
+                }
             }
         });
-*/
+
         mChatView.setAdapter(mAdapter);
         mAdapter.getLayoutManager().scrollToPosition(0);
     }
