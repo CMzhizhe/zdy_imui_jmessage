@@ -20,7 +20,6 @@ import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -57,8 +56,6 @@ import cn.jiguang.imui.commons.ImageLoader;
 import cn.jiguang.imui.commons.models.IMessage;
 import cn.jiguang.imui.messages.MsgListAdapter;
 import cn.jiguang.imui.messages.ViewHolderController;
-import cn.jiguang.imui.messages.ptr.PtrHandler;
-import cn.jiguang.imui.messages.ptr.PullToRefreshLayout;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -82,7 +79,7 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
     private PowerManager mPowerManager;
     private PowerManager.WakeLock mWakeLock;
 
-    private SmartRefreshLayout smartRefreshLayout;
+
 
     /**
      * Store all image messages' path, pass it to {@link BrowserImageActivity},
@@ -99,7 +96,7 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
         mWindow = getWindow();
         registerProximitySensorListener();
         mChatView = (ChatView) findViewById(R.id.chat_view);
-        smartRefreshLayout = findViewById(R.id.refreshLayout);
+
         mChatView.initModule();
         mData = getMessages();
         initMsgAdapter();
@@ -562,21 +559,27 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
         mAdapter.addToStart(receiveVideo, true);
         mAdapter.addToEndChronologically(mData);
 
+        SmartRefreshLayout smartRefreshLayout = mChatView.getSmartRefreshLayout();
+        smartRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                loadNextPage();
+            }
+        });
 
         mAdapter.setOnLoadMoreListener(new MsgListAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore(int page, int totalCount) {
-                smartRefreshLayout.autoRefresh();
-                loadNextPage();
-                if (totalCount < mData.size()) {
+                //smartRefreshLayout.autoRefresh();
+               /* if (totalCount < mData.size()) {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            smartRefreshLayout.finishRefresh();
+                            //smartRefreshLayout.finishRefresh();
                             mAdapter.addToEnd(mData);
                         }
                     }, 1000);
-                }
+                }*/
             }
         });
 
@@ -606,6 +609,7 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
 //                Collections.reverse(list);
                 // MessageList 0.7.2 add this method, add messages chronologically.
                 mAdapter.addToEndChronologically(list);
+                mChatView.getSmartRefreshLayout().finishRefresh();
             }
         }, 1500);
     }

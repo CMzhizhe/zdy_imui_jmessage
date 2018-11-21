@@ -8,6 +8,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.gao_jmessage.R;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import cn.jiguang.imui.chatinput.ChatInputView;
 import cn.jiguang.imui.chatinput.listener.CustomMenuEventListener;
@@ -32,6 +33,8 @@ public class ChatView extends RelativeLayout {
     private RecordVoiceButton mRecordVoiceBtn;
     private ImageButton mSelectAlbumIb;
 
+   private SmartRefreshLayout smartRefreshLayout;
+
     public ChatView(Context context) {
         super(context);
     }
@@ -47,7 +50,7 @@ public class ChatView extends RelativeLayout {
     public void initModule() {
         mMsgList = (MessageList) findViewById(R.id.msg_list);
         mChatInput = (ChatInputView) findViewById(R.id.chat_input);
-
+        smartRefreshLayout = findViewById(R.id.refreshLayout);
         /**
          * Should set menu container height once the ChatInputView has been initialized.
          * For perfect display, the height should be equals with soft input height.
@@ -83,6 +86,9 @@ public class ChatView extends RelativeLayout {
         });
     }
 
+  public SmartRefreshLayout getSmartRefreshLayout() {
+        return smartRefreshLayout;
+    }
 
     public void setMenuClickListener(OnMenuClickListener listener) {
         mChatInput.setMenuClickListener(listener);
