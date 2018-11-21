@@ -218,9 +218,11 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
             }
         });
 
+        //录音的
         mChatView.setRecordVoiceListener(new RecordVoiceListener() {
             @Override
             public void onStartRecord() {
+                // 设置存放录音文件目录
                 // set voice file path, after recording, audio file will save here
                 String path = Environment.getExternalStorageDirectory().getPath() + "/voice";
                 File destDir = new File(path);
@@ -265,6 +267,7 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
             }
         });
 
+        //这是相机相关的接口
         mChatView.setOnCameraCallbackListener(new OnCameraCallbackListener() {
             @Override
             public void onTakePictureCompleted(String photoPath) {
