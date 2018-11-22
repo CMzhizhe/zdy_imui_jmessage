@@ -32,6 +32,7 @@
             android:layout_below="@id/aurora_tv_msgitem_receiver_display_name"
             android:layout_centerVertical="true"
             android:lineSpacingExtra="5dp"
+            android:textSize="14sp"
             android:layout_toRightOf="@id/aurora_iv_msgitem_avatar"
             android:background="@drawable/aurora_receivetxt_bubble" />
     </RelativeLayout>
