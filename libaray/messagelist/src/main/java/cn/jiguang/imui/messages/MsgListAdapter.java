@@ -92,6 +92,11 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
         return this.mScroll;
     }
 
+    /**
+    * @date 创建时间:2018/11/22
+    * @author GaoXiaoXiong
+    * @Description: 播放语音
+    */
     public void setAudioPlayByEarPhone(int state) {
         AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         // 外放模式
@@ -296,6 +301,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
      * @param message        message to be add
      * @param scrollToBottom if true scroll list to bottom
      */
+    //单独添加1条消息到底部
     public void addToStart(MESSAGE message, boolean scrollToBottom) {
         Wrapper<MESSAGE> element = new Wrapper<>(message);
         mItems.add(0, element);
@@ -328,6 +334,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
      * 
      * @param messages Last page of messages.
      */
+    //从本地数据库里面获取历史的消息记录，如果  时间1 < 时间2  那么从数据库里面获取到的时间就是 先1后2
     public void addToEndChronologically(List<MESSAGE> messages) {
         int oldSize = mItems.size();
         for (int i = messages.size() - 1; i >= 0; i--) {

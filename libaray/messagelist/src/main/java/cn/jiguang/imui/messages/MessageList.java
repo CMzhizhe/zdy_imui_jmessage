@@ -17,7 +17,6 @@ public class MessageList extends RecyclerView implements GestureDetector.OnGestu
     private Context mContext;
 
     private MessageListStyle mMsgListStyle;
-    private final GestureDetector mGestureDetector;
     private MsgListAdapter mAdapter;
     private ScrollMoreListener mScrollMoreListener;
 
@@ -32,7 +31,6 @@ public class MessageList extends RecyclerView implements GestureDetector.OnGestu
     public MessageList(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         parseStyle(context, attrs);
-        mGestureDetector = new GestureDetector(context, this);
     }
 
     @SuppressWarnings("ResourceType")
@@ -64,6 +62,7 @@ public class MessageList extends RecyclerView implements GestureDetector.OnGestu
         super.setAdapter(adapter);
     }
 
+    //是否可以下拉刷新
     public void forbidScrollToRefresh(boolean disable) {
         mScrollMoreListener.forbidScrollToRefresh(disable);
     }

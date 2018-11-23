@@ -58,9 +58,9 @@ public class ChatView extends RelativeLayout {
         mChatInput.setMenuContainerHeight(819);
         mRecordVoiceBtn = mChatInput.getRecordVoiceButton();
         mSelectAlbumIb = mChatInput.getSelectAlbumBtn();
-        PtrDefaultHeader header = new PtrDefaultHeader(getContext());
 
         // add Custom Menu View
+        //管理菜单
         MenuManager menuManager = mChatInput.getMenuManager();
 
         // Custom menu order，控制底部哪些功能显示和隐藏

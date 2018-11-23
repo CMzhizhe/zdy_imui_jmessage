@@ -73,7 +73,7 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
 
     private InputMethodManager mImm;
     private Window mWindow;
-    private HeadsetDetectReceiver mReceiver;
+    private HeadsetDetectReceiver mReceiver;//播放语音
     private SensorManager mSensorManager;
     private Sensor mSensor;
     private PowerManager mPowerManager;
@@ -108,6 +108,7 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
 
         mChatView.setOnTouchListener(this);
         mChatView.setMenuClickListener(new OnMenuClickListener() {
+            //发送文本
             @Override
             public boolean onSendTextMessage(CharSequence input) {
                 if (input.length() == 0) {
@@ -379,8 +380,8 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
 
     }
 
+    //播放语音
     private class HeadsetDetectReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
@@ -411,6 +412,11 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
         }
     }
 
+    /**
+    * @date 创建时间:2018/11/22
+    * @author GaoXiaoXiong
+    * @Description: 这里当做是模拟获取历史消息
+    */
     private List<MyMessage> getMessages() {
         List<MyMessage> list = new ArrayList<>();
         Resources res = getResources();
