@@ -47,6 +47,7 @@ public class MessageList extends RecyclerView implements GestureDetector.OnGestu
      */
     public <MESSAGE extends IMessage> void setAdapter(MsgListAdapter<MESSAGE> adapter) {
         mAdapter = adapter;
+        //解决闪烁的问题，设置为false
         SimpleItemAnimator itemAnimator = new DefaultItemAnimator();
         itemAnimator.setSupportsChangeAnimations(false);
         setItemAnimator(itemAnimator);
