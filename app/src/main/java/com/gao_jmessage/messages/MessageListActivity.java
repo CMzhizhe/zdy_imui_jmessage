@@ -98,7 +98,7 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
         mChatView = (ChatView) findViewById(R.id.chat_view);
 
         mChatView.initModule();
-        mData = getMessages();
+        mData = getMessages();//这里是获取历史消息
         initMsgAdapter();
         mReceiver = new HeadsetDetectReceiver();
         IntentFilter intentFilter = new IntentFilter();
@@ -436,12 +436,18 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
         return list;
     }
 
+    /**
+     *作者：GaoXiaoXiong
+     *创建时间:2019/1/20
+     *注释描述:初始化adapter
+     */
     private void initMsgAdapter() {
         final float density = getResources().getDisplayMetrics().density;
         final float MIN_WIDTH = 60 * density;
         final float MAX_WIDTH = 200 * density;
         final float MIN_HEIGHT = 60 * density;
         final float MAX_HEIGHT = 200 * density;
+        //头像加载
         ImageLoader imageLoader = new ImageLoader() {
             @Override
             public void loadAvatarImage(ImageView avatarImageView, String string) {
@@ -544,23 +550,29 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
             }
         });
 
+        //接收
         MyMessage message = new MyMessage("Hello World", IMessage.MessageType.RECEIVE_TEXT.ordinal());
         message.setUserInfo(new DefaultUser("0", "Deadpool", "R.drawable.deadpool"));
         mAdapter.addToStart(message, true);
+
+        //发送语音
         MyMessage voiceMessage = new MyMessage("", IMessage.MessageType.RECEIVE_VOICE.ordinal());
         voiceMessage.setUserInfo(new DefaultUser("0", "Deadpool", "R.drawable.deadpool"));
         voiceMessage.setMediaFilePath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/voice/2018-02-28-105103.m4a");
         voiceMessage.setDuration(4);
-        mAdapter.addToStart(voiceMessage, true);
+        mAdapter.addToStart(voiceMessage, true);//滚动到底部
 
+        //发送语音
         MyMessage sendVoiceMsg = new MyMessage("", IMessage.MessageType.SEND_VOICE.ordinal());
         sendVoiceMsg.setUserInfo(new DefaultUser("1", "Ironman", "R.drawable.ironman"));
         sendVoiceMsg.setMediaFilePath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/voice/2018-02-28-105103.m4a");
         sendVoiceMsg.setDuration(4);
         mAdapter.addToStart(sendVoiceMsg, true);
+
         MyMessage eventMsg = new MyMessage("haha", IMessage.MessageType.EVENT.ordinal());
         mAdapter.addToStart(eventMsg, true);
 
+        //接收视频
         MyMessage receiveVideo = new MyMessage("", IMessage.MessageType.RECEIVE_VIDEO.ordinal());
         receiveVideo.setMediaFilePath(Environment.getExternalStorageDirectory().getPath() + "/Pictures/Hangouts/video-20170407_135638.3gp");
         receiveVideo.setDuration(4);
@@ -572,6 +584,7 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
         smartRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                //加载历史消息
                 loadNextPage();
             }
         });
