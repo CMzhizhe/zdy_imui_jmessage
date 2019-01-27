@@ -239,6 +239,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
                                                              Class<HOLDER> holderClass, boolean isSender) {
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
         try {
+            //过这个构造器创建一个这个对象的实例
             Constructor<HOLDER> constructor = holderClass.getDeclaredConstructor(View.class, boolean.class);
             constructor.setAccessible(true);
             HOLDER holder = constructor.newInstance(v, isSender);
