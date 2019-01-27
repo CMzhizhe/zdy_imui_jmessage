@@ -13,10 +13,10 @@ import cn.jiguang.imui.commons.models.IMessage;
  */
 public class PostCarViewHolder <MESSAGE extends IMessage> extends BaseMessageViewHolder<MESSAGE>
         implements MsgListAdapter.DefaultMessageViewHolder {
-    public CardView cardView;
+    //public CardView cardView;
     public PostCarViewHolder(View itemView, boolean isSender) {
         super(itemView);
-        cardView =  itemView.findViewById(R.id.postcar_cardview);
+       // cardView =  itemView.findViewById(R.id.postcar_cardview);
     }
 
     @Override
