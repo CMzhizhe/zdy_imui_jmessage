@@ -1,6 +1,8 @@
 package cn.jiguang.imui.messages;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.support.annotation.LayoutRes;
@@ -49,6 +51,9 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
     // Group change message
     private final int TYPE_EVENT = 10;
 
+    //postCar
+    private final int TYPE_POSTCAR = 13;
+
     // Custom message
     private final int TYPE_CUSTOM_SEND_MSG = 11;
     private final int TYPE_CUSTOM_RECEIVE_MSG = 12;
@@ -93,10 +98,10 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
     }
 
     /**
-    * @date 创建时间:2018/11/22
-    * @author GaoXiaoXiong
-    * @Description: 播放语音
-    */
+     * @date 创建时间:2018/11/22
+     * @author GaoXiaoXiong
+     * @Description: 播放语音
+     */
     public void setAudioPlayByEarPhone(int state) {
         AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         // 外放模式
@@ -130,41 +135,43 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (viewType) {
-        case TYPE_SEND_TXT:
-            return getHolder(parent, mHolders.mSendTxtLayout, mHolders.mSendTxtHolder, true);
-        case TYPE_RECEIVE_TXT:
-            return getHolder(parent, mHolders.mReceiveTxtLayout, mHolders.mReceiveTxtHolder, false);
-        case TYPE_SEND_LOCATION:
-            return getHolder(parent, mHolders.mSendLocationLayout, mHolders.mSendLocationHolder, true);
-        case TYPE_RECEIVER_LOCATION:
-            return getHolder(parent, mHolders.mReceiveLocationLayout, mHolders.mReceiveLocationHolder, false);
-        case TYPE_SEND_VOICE:
-            return getHolder(parent, mHolders.mSendVoiceLayout, mHolders.mSendVoiceHolder, true);
-        case TYPE_RECEIVER_VOICE:
-            return getHolder(parent, mHolders.mReceiveVoiceLayout, mHolders.mReceiveVoiceHolder, false);
-        case TYPE_SEND_IMAGE:
-            return getHolder(parent, mHolders.mSendPhotoLayout, mHolders.mSendPhotoHolder, true);
-        case TYPE_RECEIVER_IMAGE:
-            return getHolder(parent, mHolders.mReceivePhotoLayout, mHolders.mReceivePhotoHolder, false);
-        case TYPE_SEND_VIDEO:
-            return getHolder(parent, mHolders.mSendVideoLayout, mHolders.mSendVideoHolder, true);
-        case TYPE_RECEIVE_VIDEO:
-            return getHolder(parent, mHolders.mReceiveVideoLayout, mHolders.mReceiveVideoHolder, false);
-        case TYPE_EVENT:
-            return getHolder(parent, mHolders.mEventLayout, mHolders.mEventMsgHolder, true);
-        default:
-            if (mCustomMsgList != null && mCustomMsgList.size() > 0) {
-                return getHolder(parent, mCustomMsgList.get(viewType).getResourceId(),
-                        mCustomMsgList.get(viewType).getClazz(), mCustomMsgList.get(viewType).getIsSender());
-            }
-            return getHolder(parent, mHolders.mSendTxtLayout, mHolders.mSendLocationHolder, false);
+            case TYPE_SEND_TXT:
+                return getHolder(parent, mHolders.mSendTxtLayout, mHolders.mSendTxtHolder, true);
+            case TYPE_RECEIVE_TXT:
+                return getHolder(parent, mHolders.mReceiveTxtLayout, mHolders.mReceiveTxtHolder, false);
+            case TYPE_SEND_LOCATION:
+                return getHolder(parent, mHolders.mSendLocationLayout, mHolders.mSendLocationHolder, true);
+            case TYPE_RECEIVER_LOCATION:
+                return getHolder(parent, mHolders.mReceiveLocationLayout, mHolders.mReceiveLocationHolder, false);
+            case TYPE_SEND_VOICE:
+                return getHolder(parent, mHolders.mSendVoiceLayout, mHolders.mSendVoiceHolder, true);
+            case TYPE_RECEIVER_VOICE:
+                return getHolder(parent, mHolders.mReceiveVoiceLayout, mHolders.mReceiveVoiceHolder, false);
+            case TYPE_SEND_IMAGE:
+                return getHolder(parent, mHolders.mSendPhotoLayout, mHolders.mSendPhotoHolder, true);
+            case TYPE_RECEIVER_IMAGE:
+                return getHolder(parent, mHolders.mReceivePhotoLayout, mHolders.mReceivePhotoHolder, false);
+            case TYPE_SEND_VIDEO:
+                return getHolder(parent, mHolders.mSendVideoLayout, mHolders.mSendVideoHolder, true);
+            case TYPE_RECEIVE_VIDEO:
+                return getHolder(parent, mHolders.mReceiveVideoLayout, mHolders.mReceiveVideoHolder, false);
+            case TYPE_EVENT:
+                return getHolder(parent, mHolders.mEventLayout, mHolders.mEventMsgHolder, true);
+            case TYPE_POSTCAR://自定义
+                return getHolder(parent, mHolders.mPostCarLayout, mHolders.mPostCarHolder, false);
+            default:
+                if (mCustomMsgList != null && mCustomMsgList.size() > 0) {
+                    return getHolder(parent, mCustomMsgList.get(viewType).getResourceId(),
+                            mCustomMsgList.get(viewType).getClazz(), mCustomMsgList.get(viewType).getIsSender());
+                }
+                return getHolder(parent, mHolders.mSendTxtLayout, mHolders.mSendLocationHolder, false);
         }
     }
 
     /**
      * Specify custom message config, include view type, layout resource id, is send
      * outgoing(according to layout) and custom view holder's {@link Class} object.
-     * 
+     *
      * @param viewType View type, must not set 0-12, otherwise will throw
      *                 IllegalArgumentException
      * @param bean     {@link CustomMsgConfig}
@@ -207,6 +214,8 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
                 return TYPE_SEND_LOCATION;
             } else if (message.getType() == IMessage.MessageType.RECEIVE_LOCATION.ordinal()) {
                 return TYPE_RECEIVER_LOCATION;
+            } else if (message.getType() == IMessage.MessageType.RECEIVE_POSTCAR.ordinal()) {//这个是自定义的
+                return TYPE_POSTCAR;
             } else {
                 return getCustomType(message);
             }
@@ -227,7 +236,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
     }
 
     private <HOLDER extends ViewHolder> ViewHolder getHolder(ViewGroup parent, @LayoutRes int layout,
-            Class<HOLDER> holderClass, boolean isSender) {
+                                                             Class<HOLDER> holderClass, boolean isSender) {
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
         try {
             Constructor<HOLDER> constructor = holderClass.getDeclaredConstructor(View.class, boolean.class);
@@ -331,7 +340,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
      * If messages in list is sorted chronologically, for example,
      * messages[0].timeString < messages[1].timeString. To load last page of
      * messages from history, use this method.
-     * 
+     *
      * @param messages Last page of messages.
      */
     //从本地数据库里面获取历史的消息记录，如果  时间1 < 时间2  那么从数据库里面获取到的时间就是 先1后2
@@ -394,7 +403,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
 
     /**
      * Updates message or add message if oldId not exist.
-     * 
+     *
      * @param oldId          message id to be updated
      * @param newMessage     message to be updated
      * @param scrollToBottom scroll to bottom flag
@@ -694,6 +703,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
      * need instantiate HoldersConfig, otherwise will use default MessageListStyle.
      */
     public static class HoldersConfig {
+        private Class<? extends BaseMessageViewHolder<? extends IMessage>> mPostCarHolder;
 
         private Class<? extends BaseMessageViewHolder<? extends IMessage>> mSendTxtHolder;
         private Class<? extends BaseMessageViewHolder<? extends IMessage>> mReceiveTxtHolder;
@@ -714,6 +724,8 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
         private Class<? extends BaseMessageViewHolder<? extends IMessage>> mCustomReceiveMsgHolder;
 
         private Class<? extends BaseMessageViewHolder<? extends IMessage>> mEventMsgHolder;
+
+        private int mPostCarLayout;
 
         private int mSendTxtLayout;
         private int mReceiveTxtLayout;
@@ -736,6 +748,8 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
         private int mEventLayout;
 
         public HoldersConfig() {
+            mPostCarHolder = MyPostCarViewHolder.class;
+
             mSendTxtHolder = DefaultTxtViewHolder.class;
             mReceiveTxtHolder = DefaultTxtViewHolder.class;
 
@@ -747,7 +761,10 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
 
             mSendVideoHolder = DefaultVideoViewHolder.class;
             mReceiveVideoHolder = DefaultVideoViewHolder.class;
+
             //这里是设置视图
+            mPostCarLayout = R.layout.post_car_item;
+
             mSendTxtLayout = R.layout.item_send_text;
             mReceiveTxtLayout = R.layout.item_receive_txt;
 
@@ -772,7 +789,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
          * @param layout Custom send text message layout.
          */
         public void setSenderTxtMsg(Class<? extends BaseMessageViewHolder<? extends IMessage>> holder,
-                @LayoutRes int layout) {
+                                    @LayoutRes int layout) {
             this.mSendTxtHolder = holder;
             this.mSendTxtLayout = layout;
         }
@@ -785,7 +802,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
          * @param layout Custom receive text message layout.
          */
         public void setReceiverTxtMsg(Class<? extends BaseMessageViewHolder<? extends IMessage>> holder,
-                @LayoutRes int layout) {
+                                      @LayoutRes int layout) {
             this.mReceiveTxtHolder = holder;
             this.mReceiveTxtLayout = layout;
         }
@@ -816,7 +833,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
          * @param layout Custom send voice message layout.
          */
         public void setSenderVoiceMsg(Class<? extends BaseMessageViewHolder<? extends IMessage>> holder,
-                @LayoutRes int layout) {
+                                      @LayoutRes int layout) {
             this.mSendVoiceHolder = holder;
             this.mSendVoiceLayout = layout;
         }
@@ -838,7 +855,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
          * @param layout Custom receive voice message layout.
          */
         public void setReceiverVoiceMsg(Class<? extends BaseMessageViewHolder<? extends IMessage>> holder,
-                @LayoutRes int layout) {
+                                        @LayoutRes int layout) {
             this.mReceiveVoiceHolder = holder;
             this.mReceiveVoiceLayout = layout;
         }
@@ -860,7 +877,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
          * @param layout Custom send photo message layout
          */
         public void setSendPhotoMsg(Class<? extends BaseMessageViewHolder<? extends IMessage>> holder,
-                @LayoutRes int layout) {
+                                    @LayoutRes int layout) {
             this.mSendPhotoHolder = holder;
             this.mSendPhotoLayout = layout;
         }
@@ -882,7 +899,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
          * @param layout Custom receive photo message layout
          */
         public void setReceivePhotoMsg(Class<? extends BaseMessageViewHolder<? extends IMessage>> holder,
-                @LayoutRes int layout) {
+                                       @LayoutRes int layout) {
             this.mReceivePhotoHolder = holder;
             this.mReceivePhotoLayout = layout;
         }
@@ -904,7 +921,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
          * @param layout custom send video message layout
          */
         public void setSendVideoMsg(Class<? extends BaseMessageViewHolder<? extends IMessage>> holder,
-                @LayoutRes int layout) {
+                                    @LayoutRes int layout) {
             this.mSendVideoHolder = holder;
             this.mSendVideoLayout = layout;
         }
@@ -926,7 +943,7 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
          * @param layout Custom receive video message layout
          */
         public void setReceiveVideoMsg(Class<? extends BaseMessageViewHolder<? extends IMessage>> holder,
-                @LayoutRes int layout) {
+                                       @LayoutRes int layout) {
             this.mReceiveVideoHolder = holder;
             this.mReceiveVideoLayout = layout;
         }
@@ -942,36 +959,43 @@ public class MsgListAdapter<MESSAGE extends IMessage> extends RecyclerView.Adapt
 
         @Deprecated
         public void setSendCustomMsg(Class<? extends BaseMessageViewHolder<? extends IMessage>> holder,
-                @LayoutRes int layout) {
+                                     @LayoutRes int layout) {
             this.mCustomSendMsgHolder = holder;
             this.mCustomSendMsgLayout = layout;
         }
 
         @Deprecated
         public void setReceiveCustomMsg(Class<? extends BaseMessageViewHolder<? extends IMessage>> holder,
-                @LayoutRes int layout) {
+                                        @LayoutRes int layout) {
             this.mCustomReceiveMsgHolder = holder;
             this.mCustomReceiveMsgLayout = layout;
         }
 
         public void setSendLocationMsg(Class<? extends BaseMessageViewHolder<? extends IMessage>> holder,
-                @LayoutRes int layout) {
+                                       @LayoutRes int layout) {
             this.mSendLocationHolder = holder;
             this.mSendLocationLayout = layout;
         }
 
         public void setReceiveLocationMsg(Class<? extends BaseMessageViewHolder<? extends IMessage>> holder,
-                @LayoutRes int layout) {
+                                          @LayoutRes int layout) {
             this.mReceiveLocationHolder = holder;
             this.mReceiveLocationLayout = layout;
         }
 
         public void setEventMessage(Class<? extends BaseMessageViewHolder<? extends IMessage>> holder,
-                @LayoutRes int layout) {
+                                    @LayoutRes int layout) {
             this.mEventMsgHolder = holder;
             this.mEventLayout = layout;
         }
 
+    }
+
+    //自定义postcar
+    private static class MyPostCarViewHolder extends PostCarViewHolder<IMessage> {
+        public MyPostCarViewHolder(View itemView,boolean isSender) {
+            super(itemView,isSender);
+        }
     }
 
     private static class DefaultTxtViewHolder extends TxtViewHolder<IMessage> {

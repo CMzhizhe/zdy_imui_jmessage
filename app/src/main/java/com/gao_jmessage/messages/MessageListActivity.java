@@ -495,7 +495,7 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
         // holdersConfig.setReceiverTxtMsg(CustomViewHolder.class, layoutRes);
         // CustomViewHolder must extends ViewHolders defined in MsgListAdapter.
         // Current ViewHolders are TxtViewHolder, VoiceViewHolder.
-
+        //点击消息触发，有图片，和声音
         mAdapter.setOnMsgClickListener(new MsgListAdapter.OnMsgClickListener<MyMessage>() {
             @Override
             public void onMessageClick(MyMessage message) {
@@ -549,6 +549,11 @@ public class MessageListActivity extends Activity implements View.OnTouchListene
                 // message status view click, resend or download here
             }
         });
+
+        //postcar
+        MyMessage postCarMessage = new MyMessage("",IMessage.MessageType.RECEIVE_POSTCAR.ordinal());
+        mAdapter.addToStart(postCarMessage,true);
+
 
         //接收
         MyMessage message = new MyMessage("Hello World", IMessage.MessageType.RECEIVE_TEXT.ordinal());

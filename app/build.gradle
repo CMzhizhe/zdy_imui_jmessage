@@ -28,6 +28,7 @@ dependencies {
     implementation project(":libaray:messagelist")
     implementation project(":libaray:chatinput")
 
+
     //1.1.0 API改动过大，老用户升级需谨慎
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'
 
